@@ -16,17 +16,19 @@ app.config['MAIL_PASSWORD'] = 'kryssjbbeeveposr'
 mail = Mail(app)
 
 # ---------------- DB CONNECTION ----------------
-conn = mysql.connector.connect(
+try:
+   conn = mysql.connector.connect(
    host="127.0.0.1",
     user="root",
     password="",
     database="house_db",
     port=3306
 )
-
+   print("✅ MySQL Connected Successfully")
+except Exception as e:
+   print("DATABASE ERROR",e)
 cursor = conn.cursor()
 
-print("✅ MySQL Connected Successfully")
 
 # ---------------- LOAD MODEL ----------------
 model = pickle.load(open('model.pkl', 'rb'))
