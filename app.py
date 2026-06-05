@@ -206,6 +206,35 @@ def predict():
         return redirect('/')
 
     try:
+        # 1. Get inputs from form
+        location = request.form['location']
+        sqft = float(request.form['sqft'])
+        bhk = int(request.form['bhk'])
+        bath = int(request.form['bath'])
+
+        # 2. Load columns and model (already loaded globally is better)
+        # columns = pickle.load(open('columns.pkl', 'rb'))
+        # model = pickle.load(open('model.pkl', 'rb'))
+
+        # 3. Create feature array
+        x = np.zeros(len(columns))
+
+        if location in columns:
+            loc_index = columns.index(location)
+            x[loc_index] = 1
+
+        x[0] = sqft
+        x[1] = bhk
+        x[2] = bath
+
+        # 4. Predict
+        prediction = model.predict([x])[0]
+
+        return str(prediction)
+
+    except Exception as e:
+        print("ERROR:", e)
+        return str(e)
 
         # -------- INPUTS --------
         location = request.form['location'].strip()
