@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* Page Title */
+.title {
+    text-align: center;
+    margin-bottom: 25px;
+    color: white;
+}
+
+/* Glass Card */
+.predict-card {
+    max-width: 550px;
+    margin: auto;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.4);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Inputs */
+.form-control {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    padding: 12px;
+}
+
+/* Placeholder */
+.form-control::placeholder {
+    color: #d1d5db;
+}
+
+/* Focus */
+.form-control:focus {
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 0 10px #38bdf8;
+    color: white;
+}
+
+/* Select Option */
+select option {
+    color: black;
+}
+
+/* Button */
+.btn-predict {
+    width: 100%;
+    border-radius: 30px;
+    padding: 12px;
+    border: none;
+    background: linear-gradient(90deg, #38bdf8, #6366f1);
+    color: white;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+/* Hover */
+.btn-predict:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(56,189,248,0.7);
+}
+
+/* Result */
+.result-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+
+<h2 class="title">🏠 Predict House Price</h2>
+
+<div class="predict-card">
+
+    <form action="/predict" method="POST">
+
+        <!-- Location Dropdown -->
+        <select class="form-control" name="location" required>
+
+            <option value="">Select Location</option>
+
+            <option>Whitefield</option>
+            <option>Indiranagar</option>
+            <option>Electronic City</option>
+            <option>Yelahanka</option>
+            <option>Marathahalli</option>
+            <option>HSR Layout</option>
+            <option>Sarjapur Road</option>
+            <option>BTM Layout</option>
+            <option>Jayanagara</option>
+            <option>Banashankari</option>
+            <option>Basavanagudi</option>
+            <option>Bommanahalli</option>
+            <option>Hebbal</option>
+            <option>Peenya</option>
+            <option>Kammanahalli</option>
+            <option>Cubbon Park</option>
+            <option>Koramangala</option>
+            <option>Malleshwaram</option>
+            <option>Rajajinagar</option>
+            <option>Bellandur</option>
+            <option>KR Puram</option>
+            <option>Mahadevapura</option>
+            <option>CV Raman Nagar</option>
+            <option>Kengeri</option>
+            <option>Vijayanagar</option>
+            <option>JP Nagar</option>
+            <option>MG Road</option>
+            <option>Domlur</option>
+            <option>Ulsoor</option>
+            <option>RT Nagar</option>
+            <option>Hennur</option>
+            <option>Thanisandra</option>
+            <option>Bannerghatta Road</option>
+            <option>Kanakapura Road</option>
+            <option>Silk Board</option>
+            <option>Begur Road</option>
+            <option>Kadugodi</option>
+            <option>Brookefield</option>
+            <option>Frazer Town</option>
+            <option>Shivajinagar</option>
+            <option>Nagawara</option>
+            <option>Banaswadi</option>
+            <option>Ramamurthy Nagar</option>
+            <option>Chandapura</option>
+            <option>Attibele</option>
+            <option>Devanahalli</option>
+            <option>Airport Road</option>
+            <option>Mysore Road</option>
+            <option>Hosakerehalli</option>
+            <option>Padmanabhanagar</option>
+            <option>Uttarahalli</option>
+            <option>Sahakar Nagar</option>
+            <option>Vidyaranyapura</option>
+            <option>Nagarbhavi</option>
+            <option>Anekal</option>
+            <option>Jakkur</option>
+            <option>Horamavu</option>
+            <option>Kasturi Nagar</option>
+            <option>Cooke Town</option>
+            <option>Richmond Town</option>
+            <option>Lavelle Road</option>
+            <option>Residency Road</option>
+            <option>Cunningham Road</option>
+            <option>Seshadripuram</option>
+            <option>Wilson Garden</option>
+            <option>Arekere</option>
+            <option>Akshaya Nagar</option>
+            <option>Girinagar</option>
+            <option>Kodigehalli</option>
+            <option>Basaveshwar Nagar</option>
+            <option>Chikkabanavara</option>
+            <option>Yeshwanthpur</option>
+            <option>Mathikere</option>
+            <option>Hosur Road</option>
+            <option>Varthur</option>
+            <option>Panathur</option>
+            <option>Kadubeesanahalli</option>
+            <option>Doddanekundi</option>
+            <option>Kalyan Nagar</option>
+            <option>Sanjay Nagar</option>
+            <option>Lingarajapuram</option>
+            <option>New BEL Road</option>
+            <option>RMV Extension</option>
+            <option>Sadashivanagar</option>
+            <option>Dollar Colony</option>
+            <option>Bilekahalli</option>
+            <option>Hulimavu</option>
+            <option>Kodihalli</option>
+            <option>Kaggadasapura</option>
+            <option>Murugeshpalya</option>
+            <option>Ejipura</option>
+            <option>Hongasandra</option>
+            <option>Parappana Agrahara</option>
+            <option>Srinagar</option>
+            <option>Chamrajpet</option>
+            <option>RR Nagar</option>
+            <option>Chikkalasandra</option>
+
+        </select>
+
+        <!-- Square Feet -->
+        <input
+            class="form-control"
+            name="sqft"
+            type="number"
+            min="1000"
+            max="5000"
+            step="any"
+            placeholder="Square Feet (1000 - 5000)"
+            required
+        >
+
+        <!-- BHK -->
+        <input
+            class="form-control"
+            name="bhk"
+            type="number"
+            min="1"
+            max="8"
+            placeholder="BHK (Max 8)"
+            required
+        >
+
+        <!-- Bathrooms -->
+        <input
+            class="form-control"
+            name="bath"
+            type="number"
+            min="1"
+            max="6"
+            placeholder="Bathrooms (Max 6)"
+            required
+        >
+
+        <!-- Predict Button -->
+        <button class="btn-predict">
+            🚀 Predict Price
+        </button>
+
+    </form>
+
+    <!-- Prediction Result -->
+    {% if prediction_text %}
+    <div class="result-box">
+        {{ prediction_text }}
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - House AI</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #0f172a, #020617);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        /* Card */
+        .login-card {
+            width: 370px;
+            padding: 35px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            animation: scaleIn 0.6s ease;
+        }
+
+        @keyframes scaleIn {
+            from {opacity: 0; transform: scale(0.9);}
+            to {opacity: 1; transform: scale(1);}
+        }
+
+        h2 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 25px;
+        }
+
+        /* Floating Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            color: #cbd5f5;
+            font-size: 14px;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #38bdf8;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #38bdf8;
+        }
+
+        /* Password eye */
+        .toggle-eye {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            cursor: pointer;
+        }
+
+        /* Button */
+        .btn-login {
+            width: 100%;
+            border-radius: 30px;
+            padding: 12px;
+            border: none;
+            background: linear-gradient(90deg, #38bdf8, #6366f1);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(56,189,248,0.8);
+        }
+
+        /* Error */
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .form-check {
+            color: #cbd5f5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <h2>🔐 Login</h2>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" onsubmit="return validateForm()">
+
+        <!-- Username -->
+        <div class="input-group">
+            <input type="text" id="username" name="username" placeholder=" " required>
+            <label>Username</label>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+            <input type="email" id="email" name="email" placeholder=" " required>
+            <label>Email Address</label>
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+            <input type="password" id="password" name="password" placeholder=" " required>
+            <label>Password</label>
+            <span class="toggle-eye" onclick="togglePassword()">👁️</span>
+        </div>
+
+        <!-- Remember -->
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="remember">
+            <label class="form-check-label">Remember me</label>
+        </div>
+
+        <button type="submit" class="btn-login">🚀 Login</button>
+
+    </form>
+
+</div>
+
+<script>
+function togglePassword() {
+    let p = document.getElementById("password");
+    p.type = p.type === "password" ? "text" : "password";
+}
+
+function validateForm() {
+
+    let username = document.getElementById("username").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    // Username validation
+    let usernamePattern = /^[A-Za-z0-9]{4,}$/;
+
+    if (!usernamePattern.test(username)) {
+        alert("Username must contain at least 4 letters or numbers only");
+        return false;
+    }
+
+    // Email validation
+    let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+        alert("Enter a valid email address");
+        return false;
+    }
+
+    // Strong Password validation
+    let passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+
+    if (!passwordPattern.test(password)) {
+        alert(
+            "Password must contain:\n" +
+            "• Minimum 8 characters\n" +
+            "• One uppercase letter\n" +
+            "• One lowercase letter\n" +
+            "• One number\n" +
+            "• One special character"
+        );
+        return false;
+    }
+
+    return true;
+}

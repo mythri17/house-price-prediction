@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+/* Page Title */
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Glass Card */
+.chart-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.4);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* Canvas sizing */
+canvas {
+    max-height: 400px;
+}
+</style>
+
+<h2 class="title">📊 Price Visualization</h2>
+
+<div class="chart-card">
+    <canvas id="chart"></canvas>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('chart').getContext('2d');
+
+/* Gradient for bars */
+const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+gradient.addColorStop(0, "#38bdf8");
+gradient.addColorStop(1, "#6366f1");
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{ locations | tojson }},
+        datasets: [{
+            label: 'Price (Lakhs)',
+            data: {{ prices | tojson }},
+            backgroundColor: gradient,
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        animation: {
+            duration: 1200,
+            easing: 'easeOutQuart'
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: 'white'
+                }
+            },
+            tooltip: {
+                backgroundColor: '#1e293b',
+                titleColor: '#fff',
+                bodyColor: '#cbd5f5'
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#cbd5f5' },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+                ticks: { color: '#cbd5f5' },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}
