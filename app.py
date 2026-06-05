@@ -11,8 +11,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'predictionsystem17@gmail.com'
-app.config['MAIL_PASSWORD'] = 'kryssjbbeeveposr'
-
+app.config['MAIL_PASSWORD'] = 'ikhmtaqjrjzfuvzr'
 mail = Mail(app)
 
 # ---------------- DB CONNECTION ----------------
