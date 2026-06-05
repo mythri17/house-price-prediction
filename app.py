@@ -27,7 +27,10 @@ try:
    print("✅ MySQL Connected Successfully")
 except Exception as e:
    print("DATABASE ERROR",e)
-cursor = conn.cursor()
+try:
+   cursor = conn.cursor()
+except:
+   cursor=None
 
 
 # ---------------- LOAD MODEL ----------------
