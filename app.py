@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import pickle
 import pandas as pd
-import mysql.connector
+import sqlite3
 from flask_mail import Mail, Message
 
 # ---------------- APP ----------------
@@ -16,21 +16,23 @@ app.config['MAIL_PASSWORD'] = 'kryssjbbeeveposr'
 mail = Mail(app)
 
 # ---------------- DB CONNECTION ----------------
-try:
-   conn = mysql.connector.connect(
-   host="127.0.0.1",
-    user="root",
-    password="",
-    database="house_db",
-    port=3306
+
+conn = sqlite3.connect("house.db", check_same_thread=False)
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS predictions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location TEXT,
+    sqft REAL,
+    bhk INTEGER,
+    bath INTEGER,
+    price REAL
 )
-   print("✅ MySQL Connected Successfully")
-except Exception as e:
-   print("DATABASE ERROR",e)
-try:
-   cursor = conn.cursor()
-except:
-   cursor=None
+""")
+
+conn.commit()
+print("SQLite Connected Successfully")
 
 
 # ---------------- LOAD MODEL ----------------
@@ -305,19 +307,10 @@ Thank you for using House AI.
             
         # -------- SAVE TO DATABASE --------
         cursor.execute(
-            """
-            INSERT INTO predictions
-            (location, sqft, bhk, bath, price)
-            VALUES (%s, %s, %s, %s, %s)
-            """,
-            (
-                location,
-                sqft,
-                bhk,
-                bath,
-                prediction
-            )
-        )
+    "INSERT INTO predictions (location, sqft, bhk, bath, price) VALUES (?, ?, ?, ?, ?)",
+    (location, sqft, bhk, bath, predicted_price)
+)
+
 
         conn.commit()
 
