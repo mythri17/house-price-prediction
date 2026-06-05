@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import pickle
 import pandas as pd
+import numpy as np
 import sqlite3
 from flask_mail import Mail, Message
 
