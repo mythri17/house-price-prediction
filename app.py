@@ -223,6 +223,13 @@ def predict():
         x[2] = bath
 
         prediction = model.predict([x])[0]
+        cursor.execute("""
+    INSERT INTO predictions
+    (location, sqft, bhk, bath, price)
+    VALUES (?, ?, ?, ?, ?)
+""", (location, sqft, bhk, bath, float(prediction)))
+
+conn.commit()
 
         return render_template(
             'result.html',
