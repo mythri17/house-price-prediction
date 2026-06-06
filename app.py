@@ -237,30 +237,28 @@ def predict():
         msg = Message(
         subject='House Price Prediction Report',
         sender='predictionsystem17@gmail.com',
-        recipients=[email]
-)
+        recipients=[email])
+        msg.body = f"""
+       Hello {username},
 
-msg.body = f"""
-Hello {username},
+      House Price Prediction Details
 
-House Price Prediction Details
-
-Location: {location}
-Square Feet: {sqft}
-BHK: {bhk}
-Bathrooms: {bath}
-
-Predicted Price: ₹{formatted_price}
-
-Thank you for using House AI.
-"""
-
-mail.send(msg)
-
-return render_template(
-    'result.html',
-    price=f"{prediction:,.2f}"
-)
+      Location: {location}
+    Square Feet: {sqft}
+    BHK: {bhk}
+    Bathrooms: {bath}
+    
+    Predicted Price: ₹{formatted_price}
+    
+    Thank you for using House AI.
+    """
+    
+    mail.send(msg)
+    
+    return render_template(
+        'result.html',
+        price=f"{prediction:,.2f}"
+    )
        
 
 # ---------------- INSIGHTS ----------------
