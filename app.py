@@ -212,78 +212,71 @@ def predict():
         bhk = int(request.form['bhk'])
         bath = int(request.form['bath'])
 
+        # -------- MODEL INPUT --------
         x = np.zeros(len(columns))
 
-        if location in columns:
-            loc_index = columns.index(location)
-            x[loc_index] = 1
+        location_col = "location_" + location
+        if location_col in columns:
+            x[columns.index(location_col)] = 1
 
         x[0] = sqft
         x[1] = bhk
         x[2] = bath
 
+        # -------- PREDICTION --------
         prediction = model.predict([x])[0]
-
-        if prediction < 0:
-            prediction = abs(prediction)
-
-        cursor.execute("""
-            INSERT INTO predictions
-            (location, sqft, bhk, bath, price)
-            VALUES (?, ?, ?, ?, ?)
-        """, (location, sqft, bhk, bath, float(prediction)))
-
-        conn.commit()
+        prediction = abs(prediction)
 
         formatted_price = f"{prediction:,.2f}"
 
-        email = session.get('email')
-        username = session.get('user')
+        # -------- DB SAFE --------
+        try:
+            cursor.execute("""
+                INSERT INTO predictions (location, sqft, bhk, bath, price)
+                VALUES (?, ?, ?, ?, ?)
+            """, (location, sqft, bhk, bath, float(prediction)))
 
-        msg = Message(
-            subject='House Price Prediction Report',
-            sender='predictionsystem17@gmail.com',
-            recipients=[email]
-        )
+            conn.commit()
 
-        msg.body = f"""
+        except Exception as db_error:
+            print("DB ERROR:", db_error)
+
+        # -------- EMAIL SAFE --------
+        try:
+            email = session.get('email')
+            username = session.get('user')
+
+            if email:
+                msg = Message(
+                    subject='House Price Prediction Report',
+                    sender='predictionsystem17@gmail.com',
+                    recipients=[email]
+                )
+
+                msg.body = f"""
 Hello {username},
 
-House Price Prediction Details
-
 Location: {location}
-Square Feet: {sqft}
+Sqft: {sqft}
 BHK: {bhk}
-Bathrooms: {bath}
+Bath: {bath}
 
 Predicted Price: ₹{formatted_price}
-
-Thank you for using House AI.
 """
 
-        mail.send(msg)
+                mail.send(msg)
 
-        return render_template(
-            'result.html',
-            price=formatted_price
-        )
+        except Exception as mail_error:
+            print("MAIL ERROR:", mail_error)
 
-    except Exception as e:
-        print("ERROR:", e)
-        return str(e)
-        
-        # -------- RESULT PAGE --------
-        return render_template(
-            'result.html',
-            price=formatted_price
-        )
+        return render_template('result.html', price=formatted_price)
 
     except Exception as e:
-        print("ERROR:", e)
+        print("MAIN ERROR:", e)
         return render_template(
             'predict.html',
             locations=AREAS,
-            prediction_text=f"❌ Error: {str(e)}"
+            prediction_text=str(e)
         )
              
 
