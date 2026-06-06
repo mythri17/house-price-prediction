@@ -284,6 +284,127 @@ Thank you for using House AI.
             locations=AREAS,
             prediction_text=f"❌ Error: {str(e)}"
         )
+         # -------- INPUTS --------
+        location = request.form['location'].strip()
+
+        sqft = float(request.form['sqft'])
+
+        bhk = int(request.form['bhk'])
+
+        bath = int(request.form['bath'])
+
+        # -------- LOCATION CHECK --------
+        if location not in AREAS:
+
+            return render_template(
+                'predict.html',
+                locations=AREAS,
+                prediction_text="❌ Invalid Location"
+            )
+
+        # -------- VALIDATION --------
+        validation = validate_inputs(
+            sqft,
+            bhk,
+            bath
+        )
+
+        if validation != "OK":
+
+            return render_template(
+                'predict.html',
+                locations=AREAS,
+                prediction_text=validation
+            )
+
+        # -------- CREATE MODEL INPUT --------
+        input_data = dict.fromkeys(columns, 0)
+
+        input_data['total_sqft'] = sqft
+
+        input_data['bhk'] = bhk
+
+        input_data['bath'] = bath
+
+        location_col = 'location_' + location
+
+        if location_col in input_data:
+            input_data[location_col] = 1
+
+        # -------- DATAFRAME --------
+        df = pd.DataFrame([input_data])
+
+        df = df[columns]
+
+        # -------- PREDICTION --------
+        prediction = model.predict(df)[0]
+
+        # Avoid negative prediction
+        if prediction < 0:
+            prediction = abs(prediction)
+
+
+            # -------- FORMAT PRICE --------
+        formatted_price = format_indian_currency(prediction)
+
+        # -------- SEND EMAIL --------
+        email = session.get('email')
+        username = session.get('user')
+
+        email = session.get('email')
+        username = session.get('user')
+
+        email = session.get('email')
+        username = session.get('user')
+
+        msg = Message(
+                subject='House Price Prediction Report',
+                sender='predictionsystem17@gmail.com',
+                recipients=[email]
+            )
+
+        msg.body = f"""
+Hello {username},
+
+House Price Prediction Details
+
+Location: {location}
+Square Feet: {sqft}
+BHK: {bhk}
+Bathrooms: {bath}
+
+Predicted Price: ₹{formatted_price}
+
+Thank you for using House AI.
+"""
+
+        mail.send(msg)
+    
+            
+        # -------- SAVE TO DATABASE --------
+        cursor.execute(
+    "INSERT INTO predictions (location, sqft, bhk, bath, price) VALUES (?, ?, ?, ?, ?)",
+    (location, sqft, bhk, bath, predicted_price)
+)
+
+
+        conn.commit()
+
+        # -------- RETURN RESULT --------
+        return render_template(
+            'result.html',
+            price=formatted_price
+        )
+
+    except Exception as e:
+
+        return render_template(
+            'predict.html',
+            locations=AREAS,
+            prediction_text=f"❌ Error: {str(e)}"
+        )
+
+
              
 
 # ---------------- INSIGHTS ----------------
