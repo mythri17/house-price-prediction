@@ -212,65 +212,71 @@ def predict():
         bhk = int(request.form['bhk'])
         bath = int(request.form['bath'])
 
+        # feature array
         x = np.zeros(len(columns))
 
-        if location in columns:
-            loc_index = columns.index(location)
-            x[loc_index] = 1
+        # correct one-hot encoding
+        location_col = "location_" + location
 
+        if location_col in columns:
+            x[columns.index(location_col)] = 1
+
+        # numeric values
         x[0] = sqft
         x[1] = bhk
         x[2] = bath
 
+        # prediction
         prediction = model.predict([x])[0]
+        prediction = abs(prediction)
 
-        if prediction < 0:
-            prediction = abs(prediction)
+        formatted_price = f"{prediction:,.2f}"
 
+        # database
         cursor.execute("""
-            INSERT INTO predictions
-            (location, sqft, bhk, bath, price)
+            INSERT INTO predictions (location, sqft, bhk, bath, price)
             VALUES (?, ?, ?, ?, ?)
         """, (location, sqft, bhk, bath, float(prediction)))
 
         conn.commit()
 
-        formatted_price = f"{prediction:,.2f}"
-
+        # email (safe)
         email = session.get('email')
         username = session.get('user')
 
-        msg = Message(
-            subject='House Price Prediction Report',
-            sender='predictionsystem17@gmail.com',
-            recipients=[email]
-        )
+        try:
+            if email:
+                msg = Message(
+                    subject='House Price Prediction Report',
+                    sender='predictionsystem17@gmail.com',
+                    recipients=[email]
+                )
 
-        msg.body = f"""
+                msg.body = f"""
 Hello {username},
 
-House Price Prediction Details
-
 Location: {location}
-Square Feet: {sqft}
+Sqft: {sqft}
 BHK: {bhk}
-Bathrooms: {bath}
+Bath: {bath}
 
 Predicted Price: ₹{formatted_price}
-
-Thank you for using House AI.
 """
 
-        mail.send(msg)
+                mail.send(msg)
 
-        return render_template(
-            'result.html',
-            price=formatted_price
-        )
+        except Exception as mail_error:
+            print("EMAIL ERROR:", mail_error)
+
+        return render_template('result.html', price=formatted_price)
 
     except Exception as e:
         print("ERROR:", e)
-        return str(e)
+        return render_template(
+            'predict.html',
+            locations=AREAS,
+            prediction_text=str(e)
+        )
         # -------- RESULT PAGE --------
         return render_template(
             'result.html',
