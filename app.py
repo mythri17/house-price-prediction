@@ -231,15 +231,13 @@ def predict():
         """, (location, sqft, bhk, bath, float(prediction)))
 
         conn.commit()
-        formatted_price = f"{prediction:,.2f}"
-
-email = session.get('email')
-username = session.get('user')
-
-msg = Message(
-    subject='House Price Prediction Report',
-    sender='predictionsystem17@gmail.com',
-    recipients=[email]
+        formatted_price = f"{prediction:,.2f}
+        email = session.get('email')
+        username = session.get('user')
+        msg = Message(
+        subject='House Price Prediction Report',
+        sender='predictionsystem17@gmail.com',
+        recipients=[email]
 )
 
 msg.body = f"""
@@ -259,14 +257,10 @@ Thank you for using House AI.
 
 mail.send(msg)
 
-        return render_template(
-            'result.html',
-            price=f"{prediction:,.2f}"
-        )
-
-    except Exception as e:
-        print("ERROR:", e)
-        return str(e)
+return render_template(
+    'result.html',
+    price=f"{prediction:,.2f}"
+)
        
 
 # ---------------- INSIGHTS ----------------
