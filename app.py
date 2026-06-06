@@ -228,10 +228,12 @@ def predict():
         x[1] = bhk
         x[2] = bath
 
-        # 4. Predict
-        prediction = model.predict([x])[0]
+       prediction = model.predict([x])[0]
 
-        return str(prediction)
+return render_template(
+    'result.html',
+    prediction_text=f"Estimated House Price: ₹{prediction:,.2f}"
+)
 
     except Exception as e:
         print("ERROR:", e)
