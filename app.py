@@ -232,7 +232,8 @@ def predict():
 
 return render_template(
     'result.html',
-    prediction_text=f"Estimated House Price: ₹{prediction:,.2f}"
+    price=f"{prediction:,.2f}"
+)
 )
 
     except Exception as e:
