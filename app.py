@@ -206,8 +206,7 @@ def predict():
     if 'user' not in session:
         return redirect('/')
 
-    try:
-        try:
+   try:
     location = request.form['location']
     sqft = float(request.form['sqft'])
     bhk = int(request.form['bhk'])
