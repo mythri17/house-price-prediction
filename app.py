@@ -206,40 +206,40 @@ def predict():
     if 'user' not in session:
         return redirect('/')
 
-   try:
-    location = request.form['location']
-    sqft = float(request.form['sqft'])
-    bhk = int(request.form['bhk'])
-    bath = int(request.form['bath'])
+    try:
+        location = request.form['location']
+        sqft = float(request.form['sqft'])
+        bhk = int(request.form['bhk'])
+        bath = int(request.form['bath'])
 
-    x = np.zeros(len(columns))
+        x = np.zeros(len(columns))
 
-    if location in columns:
-        loc_index = columns.index(location)
-        x[loc_index] = 1
+        if location in columns:
+            loc_index = columns.index(location)
+            x[loc_index] = 1
 
-    x[0] = sqft
-    x[1] = bhk
-    x[2] = bath
+        x[0] = sqft
+        x[1] = bhk
+        x[2] = bath
 
-    prediction = model.predict([x])[0]
+        prediction = model.predict([x])[0]
 
-    cursor.execute("""
-        INSERT INTO predictions
-        (location, sqft, bhk, bath, price)
-        VALUES (?, ?, ?, ?, ?)
-    """, (location, sqft, bhk, bath, float(prediction)))
+        cursor.execute("""
+            INSERT INTO predictions
+            (location, sqft, bhk, bath, price)
+            VALUES (?, ?, ?, ?, ?)
+        """, (location, sqft, bhk, bath, float(prediction)))
 
-    conn.commit()
+        conn.commit()
 
-    return render_template(
-        'result.html',
-        price=f"{prediction:,.2f}"
-    )
+        return render_template(
+            'result.html',
+            price=f"{prediction:,.2f}"
+        )
 
-except Exception as e:
-    print("ERROR:", e)
-    return str(e)
+    except Exception as e:
+        print("ERROR:", e)
+        return str(e)
         # -------- INPUTS --------
         location = request.form['location'].strip()
 
