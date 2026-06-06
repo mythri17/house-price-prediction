@@ -231,7 +231,7 @@ def predict():
         """, (location, sqft, bhk, bath, float(prediction)))
 
         conn.commit()
-        formatted_price = f"{prediction:,.2f}
+        formatted_price = f"{prediction:,.2f}"
         email = session.get('email')
         username = session.get('user')
         msg = Message(
