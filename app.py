@@ -212,49 +212,41 @@ def predict():
         bhk = int(request.form['bhk'])
         bath = int(request.form['bath'])
 
-        # -------- SAFE FEATURE ARRAY --------
         x = np.zeros(len(columns))
 
-        # numeric features (make sure this matches training)
+        if location in columns:
+            loc_index = columns.index(location)
+            x[loc_index] = 1
+
         x[0] = sqft
         x[1] = bhk
         x[2] = bath
 
-        # -------- ONE-HOT LOCATION FIX --------
-        location_col = "location_" + location
-
-        if location_col in columns:
-            loc_index = columns.index(location_col)
-            x[loc_index] = 1
-
-        # -------- PREDICTION --------
         prediction = model.predict([x])[0]
 
-        prediction = abs(prediction)
+        if prediction < 0:
+            prediction = abs(prediction)
 
-        formatted_price = f"{prediction:,.2f}"
-
-        # -------- DATABASE --------
         cursor.execute("""
-            INSERT INTO predictions (location, sqft, bhk, bath, price)
+            INSERT INTO predictions
+            (location, sqft, bhk, bath, price)
             VALUES (?, ?, ?, ?, ?)
         """, (location, sqft, bhk, bath, float(prediction)))
 
         conn.commit()
 
-        # -------- EMAIL SAFETY --------
+        formatted_price = f"{prediction:,.2f}"
+
         email = session.get('email')
         username = session.get('user')
 
-        try:
-            if email:
-                msg = Message(
-                    subject='House Price Prediction Report',
-                    sender='predictionsystem17@gmail.com',
-                    recipients=[email]
-                )
+        msg = Message(
+            subject='House Price Prediction Report',
+            sender='predictionsystem17@gmail.com',
+            recipients=[email]
+        )
 
-                msg.body = f"""
+        msg.body = f"""
 Hello {username},
 
 House Price Prediction Details
@@ -269,11 +261,16 @@ Predicted Price: ₹{formatted_price}
 Thank you for using House AI.
 """
 
-                mail.send(msg)
+        mail.send(msg)
 
-        except Exception as mail_error:
-            print("Email error:", mail_error)
+        return render_template(
+            'result.html',
+            price=formatted_price
+        )
 
+    except Exception as e:
+        print("ERROR:", e)
+        return str(e)
         # -------- RESULT PAGE --------
         return render_template(
             'result.html',
