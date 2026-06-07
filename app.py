@@ -263,6 +263,8 @@ Predicted Price: ₹{formatted_price}
 
 Thank you for using House AI.
 """
+        print("Recipient Email:", email)
+        print("Username:", username)
         try:
             mail.send(msg)
             print("Email sent successfully")
