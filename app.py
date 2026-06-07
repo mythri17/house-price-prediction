@@ -225,57 +225,68 @@ def predict():
         x[2] = bath
 
         # -------- PREDICTION --------
+        @app.route('/predict', methods=['POST'])
+def predict():
+
+    if 'user' not in session:
+        return redirect('/')
+
+    try:
+        location = request.form['location']
+        sqft = float(request.form['sqft'])
+        bhk = int(request.form['bhk'])
+        bath = int(request.form['bath'])
+
+        x = np.zeros(len(columns))
+
+        location_col = "location_" + location
+
+        if location_col in columns:
+            x[columns.index(location_col)] = 1
+
+        x[0] = sqft
+        x[1] = bhk
+        x[2] = bath
+
         prediction = model.predict([x])[0]
         prediction = abs(prediction)
 
         formatted_price = f"{prediction:,.2f}"
 
-        # -------- DB SAFE --------
-       # try:
-            #cursor.execute("""
-                #INSERT INTO predictions (location, sqft, bhk, bath, price)
-               # VALUES (?, ?, ?, ?, ?)
-            """#, (location, sqft, bhk, bath, float(prediction)))
+        return f"Prediction Success: ₹{formatted_price}"
 
-           # conn.commit()
-
-       # except Exception as db_error:
-            #print("DB ERROR:", db_error)
-            print("DB SKIPPED")
-
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return f"ERROR: {e}"
         # -------- EMAIL SAFE --------
-        #try:
-           # email = session.get('email')
-           # username = session.get('user')
+        try:
+           email = session.get('email')
+            username = session.get('user')
 
-           # if email:
-               # msg = Message(
-                    #subject='House Price Prediction Report',
-                    #sender='predictionsystem17@gmail.com',
-                   # recipients=[email]
-               # )
-
-              #  msg.body = f"""
-        print("Email SKIPPED")
-Hello {username},
-
-Location: {location}
-Sqft: {sqft}
-BHK: {bhk}
-Bath: {bath}
-
-Predicted Price: ₹{formatted_price}
-"""
-
-                mail.send(msg)
-
+            if email:
+                msg = Message(
+                    subject='House Price Prediction Report',
+                    sender='predictionsystem17@gmail.com',
+                    recipients=[email]
+                )
+                msg.body = f"""
+                print("Email SKIPPED")
+                Hello {username},
+                Location: {location}
+                Sqft: {sqft}
+                BHK: {bhk}
+                Bath: {bath}
+                Predicted Price: ₹{formatted_price}
+                """
+                
+             mail.send(msg)
         except Exception as mail_error:
             print("MAIL ERROR:", mail_error)
-
-        return f"Prediction Success: {formatted_price}"
-    except Exception as e:
-        traceback.print_exc()
-        return f"ERROR: {str(e)}"
+            return f"Prediction Success: {formatted_price}"
+        except Exception as e:
+            traceback.print_exc()
+            return f"ERROR: {str(e)}"
              
 
 # ---------------- INSIGHTS ----------------
