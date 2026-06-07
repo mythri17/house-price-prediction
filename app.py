@@ -3,6 +3,7 @@ import pickle
 import pandas as pd
 import numpy as np
 import sqlite3
+import traceback
 from flask_mail import Mail, Message
 
 # ---------------- APP ----------------
@@ -37,7 +38,7 @@ print("SQLite Connected Successfully")
 
 # ---------------- LOAD MODEL ----------------
 model = pickle.load(open('model.pkl', 'rb'))
-columns = pickle.load(open('columns.pkl', 'rb'))
+columns = list(pickle.load(open('columns.pkl', 'rb')))
 
 # ---------------- LOCATIONS ----------------
 AREAS = sorted([
@@ -272,12 +273,8 @@ Predicted Price: ₹{formatted_price}
         return render_template('result.html', price=formatted_price)
 
     except Exception as e:
-        print("MAIN ERROR:", e)
-        return render_template(
-            'predict.html',
-            locations=AREAS,
-            prediction_text=str(e)
-        )
+    traceback.print_exc()
+    return f"ERROR: {str(e)}"
              
 
 # ---------------- INSIGHTS ----------------
