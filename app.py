@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+import os
 import pickle
 import pandas as pd
 import numpy as np
@@ -14,7 +15,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'predictionsystem17@gmail.com'
-app.config['MAIL_PASSWORD'] = 'xsmtpsib-0f40547f1ca09a12fee7c1725cae788b447d2d958483924cce32a9cf81312d1c-v046HdVi0FQptHkt'
+app.config['MAIL_PASSWORD'] = os.environ.get('ikhmtaqjrjzfuvzr')
 mail = Mail(app)
 
 # ---------------- DB CONNECTION ----------------
@@ -263,10 +264,9 @@ Predicted Price: ₹{formatted_price}
 
 Thank you for using House AI.
 """
-        print("Recipient Email:", email)
-        print("Username:", username)
+        
         try:
-            mail.send(msg)
+            #mail.send(msg)
             print("Email sent successfully")
         except Exception as mail_error:
             print("MAIL ERROR:", mail_error)
