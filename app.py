@@ -237,7 +237,7 @@ def predict():
 
         conn.commit()
 
-                formatted_price = f"{prediction:,.2f}"
+        formatted_price = f"{prediction:,.2f}"
 
         email = session.get('email')
         username = session.get('user')
@@ -269,6 +269,11 @@ Thank you for using House AI.
             'result.html',
             price=formatted_price
         )
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return f"ERROR: {e}"
 # ---------------- INSIGHTS ----------------
 @app.route('/insights')
 def insights():
