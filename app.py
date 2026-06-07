@@ -262,8 +262,11 @@ Predicted Price: ₹{formatted_price}
 
 Thank you for using House AI.
 """
-
-        mail.send(msg)
+        try:
+            mail.send(msg)
+            print("Email sent successfully")
+        except Exception as mail_error:
+            print("MAIL ERROR:", mail_error)
 
         return render_template(
             'result.html',
