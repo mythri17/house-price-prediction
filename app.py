@@ -12,6 +12,7 @@ app.secret_key = "secret123"
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'predictionsystem17@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ikhmtaqjrjzfuvzr'
 mail = Mail(app)
@@ -263,7 +264,7 @@ Predicted Price: ₹{formatted_price}
 Thank you for using House AI.
 """
         try:
-            mail.send(msg)
+            #mail.send(msg)
             print("Email sent successfully")
         except Exception as mail_error:
             print("MAIL ERROR:", mail_error)
