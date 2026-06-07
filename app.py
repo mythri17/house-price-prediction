@@ -16,6 +16,22 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'predictionsystem17@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ikhmtaqjrjzfuvzr'
 mail = Mail(app)
+@app.route('/test-email')
+def test_email():
+
+    msg = Message(
+        subject='Test Email',
+        sender='predictionsystem17@gmail.com',
+        recipients=['mythri1717@gmail.com']
+    )
+
+    msg.body = "This is a test email from House Price Prediction."
+
+    try:
+        mail.send(msg)
+        return "Email Sent Successfully"
+    except Exception as e:
+        return f"Email Error: {e}"
 
 # ---------------- DB CONNECTION ----------------
 
