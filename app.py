@@ -271,10 +271,9 @@ Predicted Price: ₹{formatted_price}
             print("MAIL ERROR:", mail_error)
 
         return render_template('result.html', price=formatted_price)
-
     except Exception as e:
-    traceback.print_exc()
-    return f"ERROR: {str(e)}"
+        traceback.print_exc()
+        return f"ERROR: {str(e)}"
              
 
 # ---------------- INSIGHTS ----------------
