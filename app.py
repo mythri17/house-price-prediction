@@ -231,30 +231,32 @@ def predict():
         formatted_price = f"{prediction:,.2f}"
 
         # -------- DB SAFE --------
-        try:
-            cursor.execute("""
-                INSERT INTO predictions (location, sqft, bhk, bath, price)
-                VALUES (?, ?, ?, ?, ?)
-            """, (location, sqft, bhk, bath, float(prediction)))
+       # try:
+            #cursor.execute("""
+                #INSERT INTO predictions (location, sqft, bhk, bath, price)
+               # VALUES (?, ?, ?, ?, ?)
+            """#, (location, sqft, bhk, bath, float(prediction)))
 
-            conn.commit()
+           # conn.commit()
 
-        except Exception as db_error:
-            print("DB ERROR:", db_error)
+       # except Exception as db_error:
+            #print("DB ERROR:", db_error)
+            print("DB SKIPPED")
 
         # -------- EMAIL SAFE --------
-        try:
-            email = session.get('email')
-            username = session.get('user')
+        #try:
+           # email = session.get('email')
+           # username = session.get('user')
 
-            if email:
-                msg = Message(
-                    subject='House Price Prediction Report',
-                    sender='predictionsystem17@gmail.com',
-                    recipients=[email]
-                )
+           # if email:
+               # msg = Message(
+                    #subject='House Price Prediction Report',
+                    #sender='predictionsystem17@gmail.com',
+                   # recipients=[email]
+               # )
 
-                msg.body = f"""
+              #  msg.body = f"""
+        print("Email SKIPPED")
 Hello {username},
 
 Location: {location}
@@ -270,7 +272,7 @@ Predicted Price: ₹{formatted_price}
         except Exception as mail_error:
             print("MAIL ERROR:", mail_error)
 
-        return render_template('result.html', price=formatted_price)
+        return f"Prediction Success: {formatted_price}"
     except Exception as e:
         traceback.print_exc()
         return f"ERROR: {str(e)}"
